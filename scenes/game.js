@@ -73,6 +73,23 @@ class GameScene extends Phaser.Scene {
         } else {
             console.log(`It's a tie! Both have ${playerTotal}.`);
         }
+
+        // Add a "Click to Continue" button
+        const continueButton = this.add.text(400, 300, 'Click to Continue', {
+            fontSize: '32px',
+            color: '#ffffff',
+            backgroundColor: '#000000',
+            padding: { x: 10, y: 5 },
+        }).setOrigin(0.5).setInteractive();
+
+        // Restart the game when the button is clicked
+        continueButton.on('pointerdown', () => {
+            this.scene.restart(); // Restart the scene to reset the game
+        });
+
+        // Hide the "Hit" and "Stand" buttons
+        this.hitButton.setVisible(false);
+        this.standButton.setVisible(false);
     }
 
     addCardToPlayer() {
@@ -92,6 +109,23 @@ class GameScene extends Phaser.Scene {
         // Check if the player bursts
         if (playerTotal > 21) {
             console.log('Player busts with total:', playerTotal);
+
+            // Add a "Click to Continue" button
+            const continueButton = this.add.text(400, 300, 'Click to Continue', {
+                fontSize: '32px',
+                color: '#ffffff',
+                backgroundColor: '#000000',
+                padding: { x: 10, y: 5 },
+            }).setOrigin(0.5).setInteractive();
+
+            // Restart the game when the button is clicked
+            continueButton.on('pointerdown', () => {
+                this.scene.restart(); // Restart the scene to reset the game
+            });
+
+            // Hide the "Hit" and "Stand" buttons
+            this.hitButton.setVisible(false);
+            this.standButton.setVisible(false);
         }
     }
 
