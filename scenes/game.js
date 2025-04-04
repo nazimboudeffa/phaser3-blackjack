@@ -23,83 +23,94 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Create and shuffle the deck
+        if (!this.deck) {
+            this.deck = this.createDeck();
+        }
+
         // Add a "Play" button
-        const playButton = this.add.image(400, 300, 'playButton').setInteractive();
+        this.playButton = this.add.image(400, 300, 'playButton').setInteractive();
     
         // Add a "Hit" button (initially hidden)
-        const hitButton = this.add.image(300, 500, 'hitButton').setInteractive().setVisible(false);
+        this.hitButton = this.add.image(300, 500, 'hitButton').setInteractive().setVisible(false);
 
         // Add a "Stand" button (initially hidden)
-        const standButton = this.add.image(500, 500, 'standButton').setInteractive().setVisible(false);
+        this.standButton = this.add.image(500, 500, 'standButton').setInteractive().setVisible(false);
 
     
         // Handle "Play" button click
-        playButton.on('pointerdown', () => {
+        this.playButton.on('pointerdown', () => {
             this.dealCards();
-            playButton.setVisible(false); // Hide the "Play" button
-            hitButton.setVisible(true);  // Show the "Hit" button
-            standButton.setVisible(true); // Show the "Stand" button
+            this.playButton.setVisible(false); // Hide the "Play" button
+            this.hitButton.setVisible(true);  // Show the "Hit" button
+            this.standButton.setVisible(true); // Show the "Stand" button
         });
     
         // Handle "Hit" button click
-        hitButton.on('pointerdown', () => {
+        this.hitButton.on('pointerdown', () => {
             this.addCardToPlayer();
         });
 
         // Handle "Stand" button click
-        standButton.on('pointerdown', () => {
+        this.standButton.on('pointerdown', () => {
             this.addCardToDealer(); // Add one last card to the player
+            this.time.delayedCall(1500, () => this.checkWinner()); // Check the winner after the dealer finishes
         });
     }
 
-    dealCards() {
-        // Randomly select a card for the dealer
-        const dealerCard = this.getRandomCard();
-        this.add.image(300, 200, dealerCard).setScale(0.1);
-
-        // Randomly select a card for the player
-        const playerCard = this.getRandomCard();
-        this.add.image(300, 400, playerCard).setScale(0.1);
-
-        // Initialize player card position offset
-        this.playerCardOffset = 0;
-
-        // Initialize dealer card position offset
-        this.dealerCardOffset = 0;
+    checkWinner() {
+        const playerTotal = this.calculateHandValue(this.playerCards);
+        const dealerTotal = this.calculateHandValue(this.dealerCards);
+    
+        if (playerTotal > 21) {
+            console.log('Player busts! Dealer wins.');
+        } else if (dealerTotal > 21) {
+            console.log('Dealer busts! Player wins.');
+        } else if (playerTotal > dealerTotal) {
+            console.log(`Player wins with ${playerTotal} against Dealer's ${dealerTotal}.`);
+        } else if (dealerTotal > playerTotal) {
+            console.log(`Dealer wins with ${dealerTotal} against Player's ${playerTotal}.`);
+        } else {
+            console.log(`It's a tie! Both have ${playerTotal}.`);
+        }
     }
 
     addCardToPlayer() {
         // Increment the player's card position offset
         this.playerCardOffset += 50;
     
-        // Randomly select a new card for the player
-        const newCard = this.getRandomCard();
+        // Draw a card from the deck
+        const newCard = this.deck.pop();
+        this.playerCards.push(newCard);
+    
+        // Add the card visually
         this.add.image(300 + this.playerCardOffset, 400, newCard).setScale(0.1);
+    
+        // Calculate the player's total hand value
+        const playerTotal = this.calculateHandValue(this.playerCards);
+    
+        // Check if the player bursts
+        if (playerTotal > 21) {
+            console.log('Player busts with total:', playerTotal);
+        }
     }
 
     addCardToDealer() {
-        // Initialize dealer's hand if not already done
-        if (!this.dealerCards) {
-            this.dealerCards = [];
-        }
-    
         // Increment the dealer's card position offset
         this.dealerCardOffset += 50;
-    
-        // Randomly select a new card for the dealer
-        const newCard = this.getRandomCard();
+
+        // Draw a card from the deck
+        const newCard = this.deck.pop();
         this.dealerCards.push(newCard);
-    
+
         // Add the card visually
         this.add.image(300 + this.dealerCardOffset, 200, newCard).setScale(0.1);
-    
+
         // Calculate the dealer's total hand value
         const dealerTotal = this.calculateHandValue(this.dealerCards);
-    
-        // Check if the dealer bursts or wins
-        if (dealerTotal > 21) {
-            console.log('Dealer bursts with total:', dealerTotal);
-        } else if (dealerTotal >= 17) {
+
+        // Check if the dealer bursts or stands
+        if (dealerTotal >= 17) {
             console.log('Dealer stands with total:', dealerTotal);
         } else {
             // Continue adding cards if dealer's total is less than 17
@@ -130,6 +141,45 @@ class GameScene extends Phaser.Scene {
         }
     
         return total;
+    }
+
+    createDeck() {
+        const suits = ['S', 'H', 'D', 'C']; // Spades, Hearts, Diamonds, Clubs
+        const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'];
+    
+        // Create a full deck of cards
+        const deck = [];
+        suits.forEach(suit => {
+            ranks.forEach(rank => {
+                deck.push(`${rank}${suit}`);
+            });
+        });
+    
+        // Shuffle the deck
+        for (let i = deck.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [deck[i], deck[j]] = [deck[j], deck[i]];
+        }
+    
+        return deck;
+    }
+
+    dealCards() {
+        // Draw a card for the dealer
+        const dealerCard = this.deck.pop();
+        this.add.image(300, 200, dealerCard).setScale(0.1);
+    
+        // Draw a card for the player
+        const playerCard = this.deck.pop();
+        this.add.image(300, 400, playerCard).setScale(0.1);
+    
+        // Initialize player and dealer card offsets
+        this.playerCardOffset = 0;
+        this.dealerCardOffset = 0;
+    
+        // Initialize hands
+        this.playerCards = [playerCard];
+        this.dealerCards = [dealerCard];
     }
 
     getRandomCard() {
