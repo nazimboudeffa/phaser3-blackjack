@@ -23,20 +23,34 @@ class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Add a green background
+        this.add.rectangle(400, 300, 800, 600, 0x008000); // Green background
+    
         // Create and shuffle the deck
         if (!this.deck) {
             this.deck = this.createDeck();
         }
-
+    
         // Add a "Play" button
         this.playButton = this.add.image(400, 300, 'playButton').setInteractive();
     
         // Add a "Hit" button (initially hidden)
         this.hitButton = this.add.image(300, 500, 'hitButton').setInteractive().setVisible(false);
-
+    
         // Add a "Stand" button (initially hidden)
         this.standButton = this.add.image(500, 500, 'standButton').setInteractive().setVisible(false);
+    
+        // Add a text object to display the player's hand value
+        this.playerHandValueText = this.add.text(270, 320, 'Player: 0', {
+            fontSize: '12px',
+            color: '#ffffff',
+        });
 
+        // Add a text object to display the dealer's hand value
+        this.dealerHandValueText = this.add.text(270, 270, 'Dealer: 0', {
+            fontSize: '12px',
+            color: '#ffffff',
+        });
     
         // Handle "Play" button click
         this.playButton.on('pointerdown', () => {
@@ -44,13 +58,19 @@ class GameScene extends Phaser.Scene {
             this.playButton.setVisible(false); // Hide the "Play" button
             this.hitButton.setVisible(true);  // Show the "Hit" button
             this.standButton.setVisible(true); // Show the "Stand" button
+    
+            // Update the player's and dealer's hand values after dealing cards
+            const playerTotal = this.calculateHandValue(this.playerCards);
+            const dealerTotal = this.calculateHandValue(this.dealerCards);
+            this.playerHandValueText.setText(`Player: ${playerTotal}`);
+            this.dealerHandValueText.setText(`Dealer: ${dealerTotal}`);
         });
     
         // Handle "Hit" button click
         this.hitButton.on('pointerdown', () => {
             this.addCardToPlayer();
         });
-
+    
         // Handle "Stand" button click
         this.standButton.on('pointerdown', () => {
             this.addCardToDealer(); // Add one last card to the player
@@ -106,10 +126,13 @@ class GameScene extends Phaser.Scene {
         // Calculate the player's total hand value
         const playerTotal = this.calculateHandValue(this.playerCards);
     
+        // Update the player's hand value text
+        this.playerHandValueText.setText(`Player: ${playerTotal}`);
+    
         // Check if the player bursts
         if (playerTotal > 21) {
             console.log('Player busts with total:', playerTotal);
-
+    
             // Add a "Click to Continue" button
             const continueButton = this.add.text(400, 300, 'Click to Continue', {
                 fontSize: '32px',
@@ -117,12 +140,12 @@ class GameScene extends Phaser.Scene {
                 backgroundColor: '#000000',
                 padding: { x: 10, y: 5 },
             }).setOrigin(0.5).setInteractive();
-
+    
             // Restart the game when the button is clicked
             continueButton.on('pointerdown', () => {
                 this.scene.restart(); // Restart the scene to reset the game
             });
-
+    
             // Hide the "Hit" and "Stand" buttons
             this.hitButton.setVisible(false);
             this.standButton.setVisible(false);
@@ -132,17 +155,20 @@ class GameScene extends Phaser.Scene {
     addCardToDealer() {
         // Increment the dealer's card position offset
         this.dealerCardOffset += 50;
-
+    
         // Draw a card from the deck
         const newCard = this.deck.pop();
         this.dealerCards.push(newCard);
-
+    
         // Add the card visually
         this.add.image(300 + this.dealerCardOffset, 200, newCard).setScale(0.1);
-
+    
         // Calculate the dealer's total hand value
         const dealerTotal = this.calculateHandValue(this.dealerCards);
-
+    
+        // Update the dealer's hand value text
+        this.dealerHandValueText.setText(`Dealer: ${dealerTotal}`);
+    
         // Check if the dealer bursts or stands
         if (dealerTotal >= 17) {
             console.log('Dealer stands with total:', dealerTotal);
@@ -214,6 +240,12 @@ class GameScene extends Phaser.Scene {
         // Initialize hands
         this.playerCards = [playerCard];
         this.dealerCards = [dealerCard];
+    
+        // Update the player's and dealer's hand values
+        const playerTotal = this.calculateHandValue(this.playerCards);
+        const dealerTotal = this.calculateHandValue(this.dealerCards);
+        this.playerHandValueText.setText(`Player: ${playerTotal}`);
+        this.dealerHandValueText.setText(`Dealer: ${dealerTotal}`);
     }
 
     getRandomCard() {
