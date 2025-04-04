@@ -16,6 +16,9 @@ class GameScene extends Phaser.Scene {
             });
         });
 
+        // Load card back image
+        this.load.image('cardBack', 'assets/cards/back.png');
+
         // Load button image
         this.load.image('playButton', 'assets/ui/deal.png');
         this.load.image('hitButton', 'assets/ui/hit.png');
@@ -61,7 +64,6 @@ class GameScene extends Phaser.Scene {
 
             // Show the player's and dealer's hand value texts
             this.playerHandValueText.setVisible(true);
-            this.dealerHandValueText.setVisible(true);
     
             // Update the player's and dealer's hand values after dealing cards
             const playerTotal = this.calculateHandValue(this.playerCards);
@@ -77,6 +79,7 @@ class GameScene extends Phaser.Scene {
     
         // Handle "Stand" button click
         this.standButton.on('pointerdown', () => {
+            this.dealerHandValueText.setVisible(true); // Show the dealer's hand value text
             this.addCardToDealer(); // Add one last card to the player
             this.time.delayedCall(1500, () => this.checkWinner()); // Check the winner after the dealer finishes
         });
@@ -141,7 +144,7 @@ class GameScene extends Phaser.Scene {
             const continueButton = this.add.text(400, 500, 'Click to Continue', {
                 fontSize: '24px',
                 color: '#ffffff',
-                backgroundColor: '#000000',
+                backgroundColor: '#FF0000',
                 padding: { x: 10, y: 5 },
             }).setOrigin(0.5).setInteractive();
     
@@ -157,6 +160,13 @@ class GameScene extends Phaser.Scene {
     }
 
     addCardToDealer() {
+        // Reveal the hidden dealer card if it's still hidden
+        if (this.hiddenDealerCardImage) {
+            this.hiddenDealerCardImage.destroy(); // Remove the placeholder card back
+            this.add.image(350, 200, this.hiddenDealerCard).setScale(0.1); // Show the actual card
+            this.hiddenDealerCardImage = null; // Clear the reference
+        }
+    
         // Increment the dealer's card position offset
         this.dealerCardOffset += 50;
     
@@ -164,22 +174,24 @@ class GameScene extends Phaser.Scene {
         const newCard = this.deck.pop();
         this.dealerCards.push(newCard);
     
-        // Add the card visually
-        this.add.image(300 + this.dealerCardOffset, 200, newCard).setScale(0.1);
-    
-        // Calculate the dealer's total hand value
-        const dealerTotal = this.calculateHandValue(this.dealerCards);
-    
-        // Update the dealer's hand value text
-        this.dealerHandValueText.setText(`Dealer: ${dealerTotal}`);
-    
-        // Check if the dealer bursts or stands
-        if (dealerTotal >= 17) {
-            console.log('Dealer stands with total:', dealerTotal);
-        } else {
-            // Continue adding cards if dealer's total is less than 17
-            this.time.delayedCall(1000, () => this.addCardToDealer());
-        }
+        // Add the card visually after a delay
+        this.time.delayedCall(500, () => {
+            this.add.image(300 + this.dealerCardOffset, 200, newCard).setScale(0.1);
+
+            // Calculate the dealer's total hand value
+            const dealerTotal = this.calculateHandValue(this.dealerCards);
+
+            // Update the dealer's hand value text
+            this.dealerHandValueText.setText(`Dealer: ${dealerTotal}`);
+
+            // Check if the dealer bursts or stands
+            if (dealerTotal >= 17) {
+                console.log('Dealer stands with total:', dealerTotal);
+            } else {
+                // Continue adding cards if dealer's total is less than 17
+                this.time.delayedCall(1000, () => this.addCardToDealer());
+            }
+        });
     }
     
     calculateHandValue(cards) {
@@ -229,25 +241,32 @@ class GameScene extends Phaser.Scene {
     }
 
     dealCards() {
-        // Draw a card for the dealer
-        const dealerCard = this.deck.pop();
-        this.add.image(300, 200, dealerCard).setScale(0.1);
+        // Draw the first card for the dealer
+        const dealerCard1 = this.deck.pop();
+        this.add.image(300, 200, dealerCard1).setScale(0.1);
     
-        // Draw a card for the player
-        const playerCard = this.deck.pop();
-        this.add.image(300, 400, playerCard).setScale(0.1);
+        // Draw two cards for the player
+        const playerCard1 = this.deck.pop();
+        this.add.image(300, 400, playerCard1).setScale(0.1);
+
+        // Draw the second card for the dealer (hidden)
+        this.hiddenDealerCard = this.deck.pop();
+        this.hiddenDealerCardImage = this.add.image(350, 200, 'cardBack').setScale(0.1);
+
+        const playerCard2 = this.deck.pop();
+        this.add.image(350, 400, playerCard2).setScale(0.1);
     
         // Initialize player and dealer card offsets
-        this.playerCardOffset = 0;
-        this.dealerCardOffset = 0;
+        this.playerCardOffset = 50;
+        this.dealerCardOffset = 50;
     
         // Initialize hands
-        this.playerCards = [playerCard];
-        this.dealerCards = [dealerCard];
+        this.playerCards = [playerCard1, playerCard2];
+        this.dealerCards = [dealerCard1, this.hiddenDealerCard];
     
         // Update the player's and dealer's hand values
         const playerTotal = this.calculateHandValue(this.playerCards);
-        const dealerTotal = this.calculateHandValue(this.dealerCards);
+        const dealerTotal = this.calculateHandValue([dealerCard1]); // Only show the first card's value
         this.playerHandValueText.setText(`Player: ${playerTotal}`);
         this.dealerHandValueText.setText(`Dealer: ${dealerTotal}`);
     }
