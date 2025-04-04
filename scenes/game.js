@@ -23,6 +23,11 @@ class GameScene extends Phaser.Scene {
         this.load.image('playButton', 'assets/ui/deal.png');
         this.load.image('hitButton', 'assets/ui/hit.png');
         this.load.image('standButton', 'assets/ui/stand.png');
+
+        // Load sound effects
+        this.load.audio('cardSound', 'assets/sounds/tink.wav');
+        this.load.audio('cash', 'assets/sounds/cash.mp3');
+        this.load.audio('ooh', 'assets/sounds/ohh.mp3');
     }
 
     create() {
@@ -74,11 +79,15 @@ class GameScene extends Phaser.Scene {
     
         // Handle "Hit" button click
         this.hitButton.on('pointerdown', () => {
+            // Play the card draw sound
+            this.sound.play('cardSound');
             this.addCardToPlayer();
         });
     
         // Handle "Stand" button click
         this.standButton.on('pointerdown', () => {
+            // Play the card draw sound
+            this.sound.play('cardSound');
             this.dealerHandValueText.setVisible(true); // Show the dealer's hand value text
             this.addCardToDealer(); // Add one last card to the player
             this.time.delayedCall(1500, () => this.checkWinner()); // Check the winner after the dealer finishes
@@ -94,8 +103,10 @@ class GameScene extends Phaser.Scene {
         } else if (dealerTotal > 21) {
             console.log('Dealer busts! Player wins.');
         } else if (playerTotal > dealerTotal) {
+            this.sound.play('cash'); // Play the cash sound
             console.log(`Player wins with ${playerTotal} against Dealer's ${dealerTotal}.`);
         } else if (dealerTotal > playerTotal) {
+            this.sound.play('ooh'); // Play the "ooh" sound
             console.log(`Dealer wins with ${dealerTotal} against Player's ${playerTotal}.`);
         } else {
             console.log(`It's a tie! Both have ${playerTotal}.`);
