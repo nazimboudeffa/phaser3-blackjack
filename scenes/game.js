@@ -102,7 +102,7 @@ class GameScene extends Phaser.Scene {
         const continueButton = this.add.text(400, 500, 'Click to Continue', {
             fontSize: '24px',
             color: '#ffffff',
-            backgroundColor: '#000000',
+            backgroundColor: '#ff0000',
             padding: { x: 10, y: 5 },
         }).setOrigin(0.5).setInteractive();
 
