@@ -17,7 +17,7 @@ class GameScene extends Phaser.Scene {
         });
 
         // Load button image
-        this.load.image('playButton', 'assets/ui/play.png');
+        this.load.image('playButton', 'assets/ui/deal.png');
         this.load.image('hitButton', 'assets/ui/hit.png');
         this.load.image('standButton', 'assets/ui/stand.png');
     }

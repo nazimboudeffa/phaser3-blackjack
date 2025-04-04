@@ -1,6 +1,8 @@
 // main.js
 const config = {
     type: Phaser.AUTO,
+    parent: 'phaser-example',
+    backgroundColor: '#007f0e',
     width: 800,
     height: 600,
     scale: {
