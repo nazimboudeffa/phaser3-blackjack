@@ -99,8 +99,8 @@ class GameScene extends Phaser.Scene {
         }
 
         // Add a "Click to Continue" button
-        const continueButton = this.add.text(400, 300, 'Click to Continue', {
-            fontSize: '32px',
+        const continueButton = this.add.text(400, 500, 'Click to Continue', {
+            fontSize: '24px',
             color: '#ffffff',
             backgroundColor: '#000000',
             padding: { x: 10, y: 5 },
@@ -138,8 +138,8 @@ class GameScene extends Phaser.Scene {
             console.log('Player busts with total:', playerTotal);
     
             // Add a "Click to Continue" button
-            const continueButton = this.add.text(400, 300, 'Click to Continue', {
-                fontSize: '32px',
+            const continueButton = this.add.text(400, 500, 'Click to Continue', {
+                fontSize: '24px',
                 color: '#ffffff',
                 backgroundColor: '#000000',
                 padding: { x: 10, y: 5 },
