@@ -44,13 +44,13 @@ class GameScene extends Phaser.Scene {
         this.playerHandValueText = this.add.text(270, 320, 'Player: 0', {
             fontSize: '12px',
             color: '#ffffff',
-        });
+        }).setVisible(false); // Initially hidden
 
         // Add a text object to display the dealer's hand value
         this.dealerHandValueText = this.add.text(270, 270, 'Dealer: 0', {
             fontSize: '12px',
             color: '#ffffff',
-        });
+        }).setVisible(false); // Initially hidden
     
         // Handle "Play" button click
         this.playButton.on('pointerdown', () => {
@@ -58,6 +58,10 @@ class GameScene extends Phaser.Scene {
             this.playButton.setVisible(false); // Hide the "Play" button
             this.hitButton.setVisible(true);  // Show the "Hit" button
             this.standButton.setVisible(true); // Show the "Stand" button
+
+            // Show the player's and dealer's hand value texts
+            this.playerHandValueText.setVisible(true);
+            this.dealerHandValueText.setVisible(true);
     
             // Update the player's and dealer's hand values after dealing cards
             const playerTotal = this.calculateHandValue(this.playerCards);
