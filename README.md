@@ -23,6 +23,6 @@ This is a simple Blackjack game built using Phaser 3. The game allows a player t
 
 ## ASSETS
 
-https://georgeblackwell.itch.io/playing-cards-sprite-pack
+[CARDS](https://georgeblackwell.itch.io/playing-cards-sprite-pack)
 
-https://www.vecteezy.com/vector-art/2232212-blackjack-logo-with-green-ribbon-and-on-a-green-background-isolated-card-game-casino-game
+[COVER](https://www.vecteezy.com/vector-art/2232212-blackjack-logo-with-green-ribbon-and-on-a-green-background-isolated-card-game-casino-game)
