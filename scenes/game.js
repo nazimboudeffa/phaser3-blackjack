@@ -186,7 +186,7 @@ class GameScene extends Phaser.Scene {
         this.dealerCards.push(newCard);
     
         // Add the card visually after a delay
-        this.time.delayedCall(500, () => {
+        this.time.delayedCall(200, () => {
             this.add.image(300 + this.dealerCardOffset, 200, newCard);
 
             // Calculate the dealer's total hand value
