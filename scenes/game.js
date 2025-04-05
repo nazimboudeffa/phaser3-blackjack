@@ -12,12 +12,12 @@ class GameScene extends Phaser.Scene {
         suits.forEach(suit => {
             ranks.forEach(rank => {
                 const cardKey = `${rank}${suit}`;
-                this.load.image(cardKey, `assets/cards/${cardKey}.png`);
+                this.load.image(cardKey, `assets/cards2/${cardKey}.png`);
             });
         });
 
         // Load card back image
-        this.load.image('cardBack', 'assets/cards/back.png');
+        this.load.image('cardBack', 'assets/cards2/back_red_basic.png');
 
         // Load button image
         this.load.image('playButton', 'assets/ui/deal.png');
@@ -139,7 +139,7 @@ class GameScene extends Phaser.Scene {
         this.playerCards.push(newCard);
     
         // Add the card visually
-        this.add.image(300 + this.playerCardOffset, 400, newCard).setScale(0.1);
+        this.add.image(300 + this.playerCardOffset, 400, newCard);
     
         // Calculate the player's total hand value
         const playerTotal = this.calculateHandValue(this.playerCards);
@@ -174,7 +174,7 @@ class GameScene extends Phaser.Scene {
         // Reveal the hidden dealer card if it's still hidden
         if (this.hiddenDealerCardImage) {
             this.hiddenDealerCardImage.destroy(); // Remove the placeholder card back
-            this.add.image(350, 200, this.hiddenDealerCard).setScale(0.1); // Show the actual card
+            this.add.image(350, 200, this.hiddenDealerCard); // Show the actual card
             this.hiddenDealerCardImage = null; // Clear the reference
         }
     
@@ -187,7 +187,7 @@ class GameScene extends Phaser.Scene {
     
         // Add the card visually after a delay
         this.time.delayedCall(500, () => {
-            this.add.image(300 + this.dealerCardOffset, 200, newCard).setScale(0.1);
+            this.add.image(300 + this.dealerCardOffset, 200, newCard);
 
             // Calculate the dealer's total hand value
             const dealerTotal = this.calculateHandValue(this.dealerCards);
@@ -254,18 +254,18 @@ class GameScene extends Phaser.Scene {
     dealCards() {
         // Draw the first card for the dealer
         const dealerCard1 = this.deck.pop();
-        this.add.image(300, 200, dealerCard1).setScale(0.1);
+        this.add.image(300, 200, dealerCard1);
     
         // Draw two cards for the player
         const playerCard1 = this.deck.pop();
-        this.add.image(300, 400, playerCard1).setScale(0.1);
+        this.add.image(300, 400, playerCard1);
 
         // Draw the second card for the dealer (hidden)
         this.hiddenDealerCard = this.deck.pop();
-        this.hiddenDealerCardImage = this.add.image(350, 200, 'cardBack').setScale(0.1);
+        this.hiddenDealerCardImage = this.add.image(350, 200, 'cardBack');
 
         const playerCard2 = this.deck.pop();
-        this.add.image(350, 400, playerCard2).setScale(0.1);
+        this.add.image(350, 400, playerCard2);
     
         // Initialize player and dealer card offsets
         this.playerCardOffset = 50;
